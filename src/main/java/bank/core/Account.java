@@ -1,8 +1,12 @@
 package bank.core;
 
+import bank.exception.BankingSystemException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+/**
+ * Represents a bank account
+ */
 public class Account {
 
   private final String accountNumber;
@@ -21,14 +25,14 @@ public class Account {
       throw new IllegalArgumentException("Account number cannot be null or empty");
     }
 
-    if (owner==null && !isSourceAccount) {
+    if (owner == null && !isSourceAccount) {
       throw new IllegalArgumentException("Account must have an owner");
     }
 
     this.accountNumber = accountNumber;
     this.owner = owner;
     this.balance = BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
-    this.isSourceAccount=isSourceAccount;
+    this.isSourceAccount = isSourceAccount;
   }
 
   public String getAccountNumber() {
@@ -53,10 +57,39 @@ public class Account {
   }
 
   // deposit money to account
-  public void deposit(BigDecimal amount) throws BankingSystemException
+  public void deposit(BigDecimal amount) throws BankingSystemException {
+    validateAmount(amount);
+    balance = balance.add(amount);
+  }
 
+  // withdraw money from account
+  public void withdraw(BigDecimal amount) throws BankingSystemException {
+    validateAmount(amount);
 
+    if (balance.compareTo(amount) < 0) {
+      throw new BankingSystemException(
+          String.format("Insufficient funds. Balance: $%.2f, Requested: $%.2f", balance, amount));
+    }
 
+    balance = balance.subtract(amount);
+  }
+
+  // validate amount format and value
+  private void validateAmount(BigDecimal amount) throws BankingSystemException {
+    if (amount == null) {
+      throw new BankingSystemException("Amount cannot be null");
+    }
+
+    if (amount.compareTo(BigDecimal.ZERO) < 0) {
+      throw new BankingSystemException("Amount cannot be negative: $" + amount);
+    }
+
+    if (amount.scale() > 2) {
+      throw new BankingSystemException("Amount must have at most 2 decimal places: $" + amount);
+    }
+  }
+
+  
 
 
 }
