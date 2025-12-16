@@ -75,7 +75,34 @@ public class Account {
     balance = balance.subtract(amount);
   }
 
-  
+  /**
+   * Transfer money to another account
+   * @param targetAccount, amount
+   * @throws BankingSystemException
+   */
+  public void transferTo(Account targetAccount, BigDecimal amount) throws BankingSystemException {
+    if (targetAccount == null) {
+      throw new BankingSystemException("Targer account cannot be null");
+    }
+
+    if (targetAccount.equals(this)) {
+      throw new BankingSystemException("Cannot transfer to the same account");
+    }
+
+    validateAmount(amount);
+
+    // withdraw from this account
+    this.withdraw(amount);
+
+    try {
+      // deposit to target account
+      targetAccount.deposit(amount);
+    } catch (BankingSystemException e) {
+      // rollback if deposit fails
+      this.deposit(amount);
+      throw new BankingSystemException("Transfer failed: " + e.getMessage());
+    }
+  }
 
   // validate amount format and value
   private void validateAmount(BigDecimal amount) throws BankingSystemException {
