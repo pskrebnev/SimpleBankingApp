@@ -3,6 +3,7 @@ package bank.core;
 import bank.exception.BankingSystemException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 /**
  * Represents a bank account
@@ -89,7 +90,16 @@ public class Account {
     }
   }
 
-  
+  @Override
+  public boolean equals(Object o) {
+    if (this==o) return true;
+    if (o==null || getClass() != o.getClass()) return false;
+
+    Account account = (Account) o;
+    return Objects.equals(accountNumber, account.accountNumber);
+  }
+
+
 
 
 }
