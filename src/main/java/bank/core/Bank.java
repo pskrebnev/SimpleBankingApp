@@ -2,6 +2,7 @@ package bank.core;
 
 import bank.exception.BankingSystemException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -69,10 +70,83 @@ public class Bank {
     return account;
   }
 
-  // get account by account number [TBD]
-  // get person by ID [TBD]
-  // check balance of an account [TBD]
-  // add money to account from SOURCE account [TBD]
+  // get account by account number
+  public Account getAccount(String accountNumber) throws BankingSystemException {
+    Account account = accounts.get(accountNumber);
+    if (account == null) {
+      throw new BankingSystemException("Account not found: " + accountNumber);
+    }
+    return account;
+  }
+
+  // get person by ID
+  public Person getPerson(String personId) throws BankingSystemException {
+    Person person = persons.get(personId);
+    if (person == null) {
+      throw new BankingSystemException("Person not found: " + personId);
+    }
+    return person;
+  }
+
+  // check balance of an account
+  public BigDecimal checkBalance(String accountNumber) throws BankingSystemException {
+    Account account = getAccount(accountNumber);
+    return account.getBalance();
+  }
+
+  // add money to account from SOURCE account
+  public void addMoneyFromSource(String accountNumber, double amount)
+      throws BankingSystemException {
+    addMoneyFromSource(accountNumber, BigDecimal.valueOf(amount)
+        .setScale(2, RoundingMode.HALF_UP));
+  }
+
+  // add money to account from SOURCE account
+  public void addMoneyFromSource(String accountNumber, BigDecimal amount)
+      throws BankingSystemException {
+    Account targetAccount = getAccount(accountNumber);
+    sourceAccount.transferTo(targetAccount, amount);
+    System.out.printf("+ Added $%.2f to account %s from SOURCE\n", amount, accountNumber);
+  }
+
+  // withdraw money from account
+  public void withdrawMoney(String accountNumber, double amount) throws BankingSystemException {
+    withdrawMoney(accountNumber, BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_UP));
+  }
+
+  // withdraw money from account
+  public void withdrawMoney(String accountNumber, BigDecimal amount) throws BankingSystemException {
+    Account account = getAccount(accountNumber);
+    account.withdraw(amount);
+    System.out.printf("+ Withdrew $%.2f from account %s\\n", amount, accountNumber);
+  }
+
+  // deposit money to account
+  public void depositMoney(String accountNumber, BigDecimal amount) throws BankingSystemException {
+    Account account = getAccount(accountNumber);
+    account.deposit(amount);
+    System.out.printf("+ Deposited $%.2f to account %s\n", amount, accountNumber);
+  }
+
+  // transfer money between accounts
+  public void transferMoney(String fromAccountNumber, String toAccountNumber, double amount)
+      throws BankingSystemException {
+    transferMoney(fromAccountNumber, toAccountNumber,
+        BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_UP));
+  }
+
+  // transfer money between accounts
+  public void transferMoney(String fromAccountNumber, String toAccountNumber, BigDecimal amount)
+      throws BankingSystemException {
+    Account fromAccount = getAccount(fromAccountNumber);
+    Account toAccount = getAccount(toAccountNumber);
+
+    fromAccount.transferTo(toAccount, amount);
+    System.out.printf("+ Transferred $%.2f from %s to %s\n", amount, fromAccountNumber,
+        toAccountNumber);
+  }
+
+  
 
 
 }
