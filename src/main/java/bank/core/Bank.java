@@ -146,7 +146,50 @@ public class Bank {
         toAccountNumber);
   }
 
-  
+  /**
+   * Print all accounts for a person
+   */
+  public void printPersonAccounts(String personId) throws BankingSystemException {
+    Person person = getPerson(personId);
+    System.out.println("\n"+person.getName()+"'s Accounts:");
+    System.out.println("-".repeat(60));
 
+    if (person.getAccounts().isEmpty()) {
+      System.out.println("No accounts found.");
+    } else {
+      for (Account account: person.getAccounts()) {
+        System.out.printf("  %s - Balance: $%.2f\n", account.getAccountNumber(), account.getBalance());
+      }
+    }
+    System.out.println("-".repeat(60));
+  }
 
+  /**
+   * Print all persons in the bank
+   */
+  public void printAllPersons() {
+    System.out.println("\nAll Bank Customers:");
+    System.out.println("-".repeat(60));
+
+    if (persons.isEmpty()) {
+      System.out.println("No customers found.");
+    } else {
+      for (Person person: persons.values()) {
+        System.out.printf("  %s -- %s (%d accounts)\n", person.getId(), person.getName(), person.getAccounts().size());
+      }
+    }
+    System.out.println("-".repeat(60));
+  }
+
+  /**
+   * Print detailed summary
+   */
+  public void printSummary() {
+    System.out.println("\n" + "=".repeat(60));
+    System.out.println("BANK SYSTEM SUMMARY");
+    System.out.println("=".repeat(60));
+    System.out.println("Total Persons: " + persons.size());
+    System.out.println("Total Accounts: " + (accounts.size() - 1)); // Exclude SOURCE
+    System.out.println("=".repeat(60));
+  }
 }
