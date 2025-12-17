@@ -60,6 +60,27 @@ public class BankingSystemTest {
     }
   }
 
+  private static void testDeposit() {
+    System.out.println("Test 3: Deposit Money");
+    System.out.println("─".repeat(60));
+    try {
+      Bank bank = new Bank();
+      Person person = bank.createPerson("Test User");
+      Account account = bank.createAccount(person);
+
+      bank.addMoneyFromSource(account.getAccountNumber(), 100.00);
+      BigDecimal balance = bank.checkBalance(account.getAccountNumber());
+
+      assertTrue(balance.compareTo(new BigDecimal("100.00")) == 0,
+          "Balance should be 100.00");
+
+      System.out.println("+ PASSED\n");
+    } catch (Exception e) {
+      System.out.println("- FAILED: " + e.getMessage() + "\n");
+      testsFailed++;
+    }
+  }
+
 
 
 }
