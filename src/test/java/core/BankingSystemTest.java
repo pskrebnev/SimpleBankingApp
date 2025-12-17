@@ -18,7 +18,6 @@ public class BankingSystemTest {
     System.out.println("╚════════════════════════════════════════════════════════════╝\n");
 
 
-
   }
 
   private static void testPersonCreation() {
@@ -80,9 +79,4 @@ public class BankingSystemTest {
       testsFailed++;
     }
   }
-
-
-
-
-
 }
